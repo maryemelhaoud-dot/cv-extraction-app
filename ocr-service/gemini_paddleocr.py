@@ -10,13 +10,11 @@ from google.genai import types
 
 load_dotenv()
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL = "gemini-3.6-flash"
-
-if not GEMINI_API_KEY:
-    raise RuntimeError("GEMINI_API_KEY manquant dans le fichier .env")
-
-_client = genai.Client(api_key=GEMINI_API_KEY)
+def _get_client():
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        raise RuntimeError("GEMINI_API_KEY manquant dans le fichier .env")
+    return genai.Client(api_key=api_key)
 
 RESPONSE_SCHEMA = {
     "type": "object",
@@ -205,16 +203,16 @@ def structure_cv(ocr_text, cv_file_path, provider="gemini", **kwargs):
     if not cv_file_path.exists():
         raise FileNotFoundError(f"Fichier CV introuvable : {cv_file_path}")
 
+    client = _get_client()
     file_bytes = cv_file_path.read_bytes()
     mime_type = _guess_mime_type(cv_file_path)
 
     prompt = PROMPT.format(ocr_text=ocr_text or "(aucun texte OCR disponible)")
 
     models_to_try = [
-        "gemini-3.6-flash",
         "gemini-2.5-flash",
-        "gemini-1.5-flash",
         "gemini-2.0-flash",
+        "gemini-1.5-flash",
         "gemini-2.5-pro",
         "gemini-1.5-pro",
     ]
@@ -225,7 +223,7 @@ def structure_cv(ocr_text, cv_file_path, provider="gemini", **kwargs):
     for model_name in models_to_try:
         try:
             print(f"[Gemini Structuring] Tentative avec le modèle {model_name}...")
-            response = _client.models.generate_content(
+            response = client.models.generate_content(
                 model=model_name,
                 contents=[
                     types.Part.from_bytes(data=file_bytes, mime_type=mime_type),
@@ -278,13 +276,13 @@ def structure_cv_from_text_only(ocr_text):
     Envoie UNIQUEMENT le texte OCR extrait par PaddleOCR à Gemini (SANS joindre le fichier PDF/image).
     Permet de tester et d'évaluer la précision d'extraction de PaddleOCR à 100%.
     """
+    client = _get_client()
     prompt = PROMPT_TEXT_ONLY.format(ocr_text=ocr_text or "(aucun texte OCR extrait)")
 
     models_to_try = [
-        "gemini-3.6-flash",
         "gemini-2.5-flash",
-        "gemini-1.5-flash",
         "gemini-2.0-flash",
+        "gemini-1.5-flash",
         "gemini-2.5-pro",
         "gemini-1.5-pro",
     ]
@@ -295,7 +293,7 @@ def structure_cv_from_text_only(ocr_text):
     for model_name in models_to_try:
         try:
             print(f"[Gemini Texte-Seul] Tentative avec le modèle {model_name}...")
-            response = _client.models.generate_content(
+            response = client.models.generate_content(
                 model=model_name,
                 contents=[prompt],
                 config=types.GenerateContentConfig(

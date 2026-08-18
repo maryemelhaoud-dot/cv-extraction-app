@@ -74,6 +74,45 @@ def _parse_date(value):
         return None
 
 
+def _parse_float(value):
+    """Convertit une valeur en float (ou None) de manière sécurisée pour les champs Decimal."""
+    if value is None:
+        return None
+    try:
+        # Extrait le premier nombre trouvé dans la chaîne (ex: "2 ans" -> 2.0)
+        import re
+        match = re.search(r"(\d+(?:\.\d+)?)", str(value))
+        if match:
+            return float(match.group(1))
+    except Exception:
+        pass
+    return None
+
+
+def _sanitize_url(url):
+    """Assure qu'une URL est bien formée ou retourne None si invalide."""
+    if not url or not isinstance(url, str):
+        return None
+    url = url.strip()
+    if not url or url.lower() in ("null", "n/a", "none", "non spécifié", "-"):
+        return None
+    if url.startswith("http://") or url.startswith("https://"):
+        return url[:500]
+    if "." in url and not " " in url:
+        return f"https://{url}"[:500]
+    return None
+
+
+def _sanitize_dates(debut_raw, fin_raw):
+    """Retourne (date_debut, date_fin) valides garantissant date_fin >= date_debut."""
+    d_debut = _parse_date(debut_raw)
+    d_fin = _parse_date(fin_raw)
+    if d_debut and d_fin and d_fin < d_debut:
+        # Inversion détectée : swap pour respecter la contrainte DB date_fin >= date_debut
+        d_debut, d_fin = d_fin, d_debut
+    return d_debut, d_fin
+
+
 def _traiter_cv_background(candidat_id, provider):
     try:
         candidat = Candidat.objects.get(id=candidat_id)
@@ -161,16 +200,21 @@ class UploadCVView(APIView):
 def enregistrer_donnees_candidat(candidat, data):
     """Met à jour le Candidat et crée les objets liés à partir du JSON renvoyé par l'ocr-service."""
 
-    infos = data.get("candidat", {})
+    infos = data.get("candidat", {}) if isinstance(data.get("candidat"), dict) else {}
     for champ in (
         "nom_complet", "titre_profil", "email", "telephone", "telephone_secondaire",
-        "adresse", "ville", "code_postal", "pays", "linkedin", "portfolio", "site_web",
+        "adresse", "ville", "code_postal", "pays",
         "lieu_naissance", "nationalite", "situation_familiale", "permis_conduire",
         "mobilite_geographique", "disponibilite", "resume_profil", "objectif_professionnel",
     ):
         valeur = infos.get(champ)
+        if valeur and str(valeur).strip():
+            setattr(candidat, champ, str(valeur).strip())
+
+    for url_field in ("linkedin", "portfolio", "site_web"):
+        valeur = _sanitize_url(infos.get(url_field))
         if valeur:
-            setattr(candidat, champ, valeur)
+            setattr(candidat, url_field, valeur)
 
     date_naissance = _parse_date(infos.get("date_naissance"))
     if date_naissance:
@@ -188,92 +232,113 @@ def enregistrer_donnees_candidat(candidat, data):
     candidat.projets.all().delete()
     candidat.centres_interet.all().delete()
 
-    Formation.objects.bulk_create([
-        Formation(
+    formations_list = []
+    for f in data.get("formations", []):
+        if not isinstance(f, dict) or not f.get("diplome"):
+            continue
+        d_debut, d_fin = _sanitize_dates(f.get("date_debut"), f.get("date_fin"))
+        formations_list.append(Formation(
             candidat=candidat,
-            diplome=f.get("diplome") or "",
+            diplome=str(f.get("diplome")).strip(),
             specialite=f.get("specialite"),
             etablissement=f.get("etablissement"),
             lieu=f.get("lieu"),
             periode=f.get("periode"),
-            date_debut=_parse_date(f.get("date_debut")),
-            date_fin=_parse_date(f.get("date_fin")),
+            date_debut=d_debut,
+            date_fin=d_fin,
             en_cours=bool(f.get("en_cours")),
             niveau=f.get("niveau"),
             mention=f.get("mention"),
             description=f.get("description"),
-        )
-        for f in data.get("formations", []) if f.get("diplome")
-    ])
+        ))
+    Formation.objects.bulk_create(formations_list)
 
-    Experience.objects.bulk_create([
-        Experience(
+    experiences_list = []
+    for e in data.get("experiences", []):
+        if not isinstance(e, dict) or not e.get("poste"):
+            continue
+        d_debut, d_fin = _sanitize_dates(e.get("date_debut"), e.get("date_fin"))
+        experiences_list.append(Experience(
             candidat=candidat,
             type=e.get("type"),
-            poste=e.get("poste") or "",
+            poste=str(e.get("poste")).strip(),
             organisme=e.get("organisme"),
             lieu=e.get("lieu"),
             periode=e.get("periode"),
-            date_debut=_parse_date(e.get("date_debut")),
-            date_fin=_parse_date(e.get("date_fin")),
+            date_debut=d_debut,
+            date_fin=d_fin,
             en_cours=bool(e.get("en_cours")),
             description=e.get("description"),
-        )
-        for e in data.get("experiences", []) if e.get("poste")
-    ])
+        ))
+    Experience.objects.bulk_create(experiences_list)
 
-    Competence.objects.bulk_create([
-        Competence(
+    competences_list = []
+    for c in data.get("competences", []):
+        if not isinstance(c, dict) or not c.get("nom_competence"):
+            continue
+        competences_list.append(Competence(
             candidat=candidat,
-            nom_competence=c.get("nom_competence") or "",
+            nom_competence=str(c.get("nom_competence")).strip(),
             categorie=c.get("categorie"),
             sous_categorie=c.get("sous_categorie"),
             niveau=c.get("niveau"),
-            annees_experience=c.get("annees_experience"),
-        )
-        for c in data.get("competences", []) if c.get("nom_competence")
-    ])
+            annees_experience=_parse_float(c.get("annees_experience")),
+        ))
+    Competence.objects.bulk_create(competences_list)
 
-    Langue.objects.bulk_create([
-        Langue(candidat=candidat, langue=l.get("langue") or "", niveau=l.get("niveau"))
-        for l in data.get("langues", []) if l.get("langue")
-    ])
-
-    Certification.objects.bulk_create([
-        Certification(
+    langues_list = []
+    for l in data.get("langues", []):
+        if not isinstance(l, dict) or not l.get("langue"):
+            continue
+        langues_list.append(Langue(
             candidat=candidat,
-            nom=c.get("nom") or "",
+            langue=str(l.get("langue")).strip(),
+            niveau=l.get("niveau")
+        ))
+    Langue.objects.bulk_create(langues_list)
+
+    certifications_list = []
+    for c in data.get("certifications", []):
+        if not isinstance(c, dict) or not c.get("nom"):
+            continue
+        certifications_list.append(Certification(
+            candidat=candidat,
+            nom=str(c.get("nom")).strip(),
             organisme=c.get("organisme"),
             date_obtention=_parse_date(c.get("date_obtention")),
             date_expiration=_parse_date(c.get("date_expiration")),
-            url_verification=c.get("url_verification"),
-        )
-        for c in data.get("certifications", []) if c.get("nom")
-    ])
+            url_verification=_sanitize_url(c.get("url_verification")),
+        ))
+    Certification.objects.bulk_create(certifications_list)
 
-    Projet.objects.bulk_create([
-        Projet(
+    projets_list = []
+    for p in data.get("projets", []):
+        if not isinstance(p, dict) or not p.get("nom_projet"):
+            continue
+        d_debut, d_fin = _sanitize_dates(p.get("date_debut"), p.get("date_fin"))
+        projets_list.append(Projet(
             candidat=candidat,
-            nom_projet=p.get("nom_projet") or "",
+            nom_projet=str(p.get("nom_projet")).strip(),
             type_projet=p.get("type_projet"),
             technologies=p.get("technologies"),
-            url_projet=p.get("url_projet"),
+            url_projet=_sanitize_url(p.get("url_projet")),
             periode=p.get("periode"),
-            date_debut=_parse_date(p.get("date_debut")),
-            date_fin=_parse_date(p.get("date_fin")),
+            date_debut=d_debut,
+            date_fin=d_fin,
             en_cours=bool(p.get("en_cours")),
             description=p.get("description"),
             role=p.get("role"),
-        )
-        for p in data.get("projets", []) if p.get("nom_projet")
-    ])
+        ))
+    Projet.objects.bulk_create(projets_list)
 
-    CentreInteret.objects.bulk_create([
-        CentreInteret(
+    centres_interet_list = []
+    for ci in data.get("centres_interet", []):
+        if not isinstance(ci, dict) or not ci.get("intitule"):
+            continue
+        centres_interet_list.append(CentreInteret(
             candidat=candidat,
-            intitule=ci.get("intitule") or "",
+            intitule=str(ci.get("intitule")).strip(),
             categorie=ci.get("categorie"),
             description=ci.get("description"),
-        )
-        for ci in data.get("centres_interet", []) if ci.get("intitule")
-    ])
+        ))
+    CentreInteret.objects.bulk_create(centres_interet_list)

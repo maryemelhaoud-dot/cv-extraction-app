@@ -18,11 +18,11 @@ except ImportError:
 
 load_dotenv()
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-if not GEMINI_API_KEY:
-    raise RuntimeError("GEMINI_API_KEY manquant dans le fichier .env")
-
-_client = genai.Client(api_key=GEMINI_API_KEY)
+def _get_client():
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        raise RuntimeError("GEMINI_API_KEY manquant dans le fichier .env")
+    return genai.Client(api_key=api_key)
 
 PROMPT_DIRECT = """Tu es un expert en extraction et analyse automatique de CV.
 Analyse le fichier CV joint (PDF ou image) et extrait l'ensemble des informations sous forme de JSON structuré strict.
@@ -31,6 +31,7 @@ Analyse le fichier CV joint (PDF ou image) et extrait l'ensemble des information
 
 def extract_direct_gemini(cv_file_path):
     """Envoie le fichier CV directement à l'API Gemini Vision."""
+    client = _get_client()
     cv_path = Path(cv_file_path)
     if not cv_path.exists():
         raise FileNotFoundError(f"Fichier CV introuvable : {cv_path}")
@@ -39,10 +40,11 @@ def extract_direct_gemini(cv_file_path):
     mime_type = _guess_mime_type(cv_path)
 
     models_to_try = [
-        "gemini-3.6-flash",
         "gemini-2.5-flash",
-        "gemini-1.5-flash",
         "gemini-2.0-flash",
+        "gemini-1.5-flash",
+        "gemini-2.5-pro",
+        "gemini-1.5-pro",
     ]
 
     last_error = None
@@ -51,7 +53,7 @@ def extract_direct_gemini(cv_file_path):
     for model_name in models_to_try:
         try:
             print(f"[Gemini Direct] Tentative avec le modèle {model_name}...")
-            response = _client.models.generate_content(
+            response = client.models.generate_content(
                 model=model_name,
                 contents=[
                     types.Part.from_bytes(data=file_bytes, mime_type=mime_type),

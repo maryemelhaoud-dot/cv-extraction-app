@@ -12,7 +12,7 @@ load_dotenv()
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
-GROQ_MODEL = "groq/compound-mini"
+GROQ_MODEL = "llama-3.3-70b-versatile"
 
 SYSTEM_PROMPT = """Tu es un expert en extraction et structuration de CV.
 Tu reçois un texte brut de CV extrait intégralement par OCR (PaddleOCR).
@@ -156,42 +156,57 @@ def _parse_json_robustly(content: str) -> dict:
 
 
 def structure_cv_groq(ocr_text):
-    """Envoie le texte OCR à l'API Groq (groq/compound-mini) pour structuration JSON."""
-    if not GROQ_API_KEY:
+    """Envoie le texte OCR à l'API Groq pour structuration JSON."""
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
         raise RuntimeError("GROQ_API_KEY manquant dans le fichier .env de ocr-service")
 
     headers = {
-        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
     }
 
-    payload = {
-        "model": GROQ_MODEL,
-        "max_tokens": 4096,
-        "messages": [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": f"Voici le texte OCR du CV à structurer en json :\n\n{ocr_text}"}
-        ],
-        "response_format": {"type": "json_object"},
-        "temperature": 0.1,
-    }
+    models_to_try = [
+        "llama-3.3-70b-versatile",
+        "llama-3.1-8b-instant",
+        "llama3-70b-8192",
+        "llama3-8b-8192",
+    ]
 
-    print(f"[Groq Structuring] Appel direct du modèle {GROQ_MODEL} (max_tokens=4096)...")
-    try:
-        response = requests.post(GROQ_API_URL, headers=headers, json=payload, timeout=60)
-        response.raise_for_status()
-    except requests.exceptions.HTTPError as err:
-        raise RuntimeError(f"Erreur API Groq ({GROQ_MODEL}) HTTP {err.response.status_code if err.response is not None else 'Error'} : {err}") from err
-    except requests.exceptions.RequestException as err:
-        raise RuntimeError(f"Erreur de connexion à l'API Groq : {err}") from err
+    last_error = None
+    content = None
 
-    result_json = response.json()
-    content = result_json["choices"][0]["message"]["content"]
+    for model_name in models_to_try:
+        payload = {
+            "model": model_name,
+            "max_tokens": 4096,
+            "messages": [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": f"Voici le texte OCR du CV à structurer en json :\n\n{ocr_text}"}
+            ],
+            "response_format": {"type": "json_object"},
+            "temperature": 0.1,
+        }
+
+        print(f"[Groq Structuring] Tentative avec le modèle {model_name}...")
+        try:
+            response = requests.post(GROQ_API_URL, headers=headers, json=payload, timeout=60)
+            response.raise_for_status()
+            result_json = response.json()
+            content = result_json["choices"][0]["message"]["content"]
+            if content:
+                break
+        except Exception as err:
+            print(f"[Groq Structuring] Échec du modèle {model_name} : {err}")
+            last_error = err
+
+    if not content:
+        raise RuntimeError(f"Tous les modèles Groq ont échoué. Dernière erreur : {last_error}")
 
     try:
         data = _parse_json_robustly(content)
     except Exception as err:
-        raise RuntimeError(f"Erreur de décodage JSON pour le modèle {GROQ_MODEL} : {err}") from err
+        raise RuntimeError(f"Erreur de décodage JSON Groq : {err}") from err
 
     return data
 

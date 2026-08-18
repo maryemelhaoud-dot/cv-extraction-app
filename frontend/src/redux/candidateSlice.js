@@ -1,15 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
-import axios from "axios"
+import api from "../services/api"
 
 // THUNK → récupérer résultat OCR
 export const fetchResult = createAsyncThunk(
   "candidate/fetchResult",
   async (candidatId, thunkAPI) => {
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/api/candidats/${candidatId}/`
-      )
-
+      const response = await api.get(`/candidats/${candidatId}/`)
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message)
