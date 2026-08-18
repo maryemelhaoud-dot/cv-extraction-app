@@ -48,9 +48,9 @@ L'utilisateur peut choisir sa méthode d'extraction préférée depuis l'interfa
 
 ---
 
-## 🚀 Démarrage Rapide
+##  Démarrage Rapide
 
-### 📥 1. Clonage du Dépôt
+###  1. Clonage du Dépôt
 
 ```bash
 git clone https://github.com/maryemelhaoud-dot/cv-extraction-app.git
