@@ -1,0 +1,120 @@
+/*HEADER / CONTAINER */
+.navbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 40px 40px;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+/* LOGO */
+.navbar-logo {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.navbar-logo img {
+    height: 64px;
+    width: auto;
+    display: block;
+}
+
+/* STEPPER - CONTAINER */
+.navbar-stepper {
+    flex: 2;
+    max-width: 700px;
+    margin-top: 8px;
+}
+
+/*SPACER (équilibre le logo pour un vrai centrage) */
+.navbar-spacer {
+    flex: 1;
+}
+
+/*CERCLES (icônes numérotées) */
+.navbar-stepper .MuiStepIcon-root {
+    width: 34px !important;
+    height: 34px !important;
+    color: #d5dadd !important;
+}
+
+.navbar-stepper .MuiStepIcon-root.Mui-active {
+    color: #00843d !important;
+}
+
+.navbar-stepper .MuiStepIcon-root.Mui-completed {
+    color: #00843d !important;
+}
+
+.navbar-stepper .MuiStepIcon-text {
+    fill: #fff !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+}
+
+/*LABELS (texte sous les cercles) */
+.navbar-stepper .MuiStepLabel-label {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #1a2b3c !important;
+    margin-top: 8px !important;
+}
+
+.navbar-stepper .MuiStepLabel-label.Mui-active {
+    color: #00843d !important;
+}
+
+.navbar-stepper .MuiStepLabel-label.Mui-completed {
+    color: #00843d !important;
+}
+
+/*LIGNES DE CONNEXION */
+.navbar-stepper .MuiStepConnector-line {
+    border-top-width: 2px !important;
+    border-color: #d5dadd !important;
+}
+
+.navbar-stepper .MuiStepConnector-root.Mui-active .MuiStepConnector-line {
+    border-color: #00843d !important;
+}
+
+.navbar-stepper .MuiStepConnector-root.Mui-completed .MuiStepConnector-line {
+    border-color: #00843d !important;
+}
+
+/*RESPONSIVE */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: center;
+        gap: 25px;
+        padding: 20px;
+    }
+
+    .navbar-logo,
+    .navbar-spacer {
+        flex: none;
+        width: auto;
+        justify-content: center;
+    }
+
+    .navbar-logo img {
+        height: 40px;
+    }
+
+    .navbar-stepper {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+    }
+
+    .navbar-stepper .MuiStepLabel-label {
+        font-size: 12px !important;
+    }
+}

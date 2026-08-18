@@ -1,0 +1,95 @@
+/* file card */
+
+.file-card {
+    width: 475px;
+    min-height: 64px;
+
+    margin-top: 18px;
+    padding: 0 18px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #c8e5d4;
+    border-radius: 9px;
+
+    background-color: #f8fcf9;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+/* infos de fichier */
+
+.file-info {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    min-width: 0;
+}
+
+
+/* Icône fichier */
+
+.file-icon {
+    color: #00843d;
+
+    font-size: 25px !important;
+
+    flex-shrink: 0;
+}
+
+
+/* Nom du fichier */
+
+.file-name {
+    color: #34495e;
+
+    font-size: 16px;
+    font-weight: 500;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* bouton supprimer */
+
+.remove-file {
+    width: 34px;
+    height: 34px;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 50%;
+
+    background-color: transparent;
+
+    color: #777;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    flex-shrink: 0;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.remove-file svg {
+    font-size: 21px;
+}
+
+.remove-file:hover {
+    background-color: #f1f1f1;
+    color: #d32f2f;
+}

@@ -1,0 +1,226 @@
+/* zone upload */
+
+.upload-zone {
+    width: 680px;
+    max-width: 90%;
+    min-height: 440px;
+    height: auto;
+
+    margin: 0 auto;
+    padding: 35px 25px;
+
+    border: 2px dashed #70b88b;
+    border-radius: 14px;
+
+    background-color: #ffffff;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+    text-align: center;
+
+    transition: all 0.2s ease;
+}
+
+
+/* icone */
+.upload-icon {
+    width: 80px;
+    height: 80px;
+
+    border-radius: 50%;
+
+    background-color: #f0f9f3;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 20px;
+
+    color: #00843d;
+}
+
+.upload-icon svg {
+    font-size: 48px;
+}
+
+
+/*title */
+
+.upload-zone h3 {
+    margin: 0 0 8px 0;
+
+    color: #162b38;
+
+    font-size: 22px;
+    font-weight: 600;
+}
+
+
+/* description */
+
+.upload-zone p {
+    margin: 0 0 22px 0;
+
+    color: #536675;
+
+    font-size: 16px;
+}
+
+
+/* boutton */
+
+.upload-button {
+    border: none;
+
+    padding: 13px 25px;
+
+    border-radius: 7px;
+
+    background-color: #00843d;
+
+    color: white;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.upload-button svg {
+    font-size: 21px;
+}
+
+.upload-button:hover {
+    background-color: #006f34;
+
+    transform: translateY(-1px);
+}
+
+.analyser-button {
+    margin-top: 20px;
+    padding: 14px 36px;
+    font-size: 16px;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(0, 132, 61, 0.25);
+}
+
+
+/* hover de la zone */
+
+.upload-zone:hover {
+    border-color: #00843d;
+
+    background-color: #fbfffc;
+}
+/* Input fichier invisible */
+
+.file-input {
+    display: none;
+}
+/* input file */
+
+.file-input {
+    display: none;
+}
+
+
+/* fichier sélectionné */
+
+.selected-file {
+    width: 380px;
+
+    margin-top: 20px;
+    padding: 12px 16px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    background-color: #f5faf7;
+
+    border: 1px solid #c8e5d2;
+    border-radius: 8px;
+
+    box-sizing: border-box;
+}
+
+
+/* Icône fichier */
+
+.file-icon {
+    font-size: 25px;
+}
+
+
+/* Informations fichier */
+
+.file-info {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    text-align: left;
+    overflow: hidden;
+}
+
+
+.file-name {
+    color: #162b38;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.file-size {
+    margin-top: 3px;
+
+    color: #6b7c87;
+
+    font-size: 12px;
+}
+
+
+/* Bouton supprimer */
+
+.remove-file {
+    width: 28px;
+    height: 28px;
+
+    border: none;
+    border-radius: 50%;
+
+    background-color: #ffffff;
+
+    color: #777;
+
+    font-size: 20px;
+    line-height: 20px;
+
+    cursor: pointer;
+}
+
+
+.remove-file:hover {
+    background-color: #ffecec;
+    color: #d32f2f;
+}

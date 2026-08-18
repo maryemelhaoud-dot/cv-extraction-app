@@ -1,0 +1,419 @@
+
+/* contenu */
+
+.extraction-content {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+
+    padding: 25px 30px 45px;
+
+    box-sizing: border-box;
+
+    text-align: center;
+}
+
+/* carte d'extraction*/
+
+.extraction-progress {
+    width: 100%;
+    max-width: 760px;
+
+    margin: 0 auto;
+    padding: 24px 28px;
+
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    gap: 38px;
+
+    background-color: #ffffff;
+
+    border: 1px solid #e5e9eb;
+    border-radius: 14px;
+
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+
+/* cercle de progression */
+
+.progress-circle {
+    width: 145px;
+    height: 145px;
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: conic-gradient(
+        #00843d 0deg 151deg,
+        #e1eee8 151deg 360deg
+    );
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-circle-inner {
+    width: 119px;
+    height: 119px;
+
+    border-radius: 50%;
+
+    background-color: #ffffff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-circle-inner span {
+    color: #00843d;
+    font-size: 36px;
+    font-weight: 700;
+}
+
+
+/* partie droite*/
+
+.progress-details {
+    flex: 1;
+    min-width: 0;
+}
+
+
+/* titre analyse */
+
+.progress-details h2 {
+    margin: 0 0 7px;
+
+    color: #102a43;
+
+    font-size: 21px;
+    font-weight: 700;
+
+    text-align: center;
+}
+
+
+/* description */
+
+.progress-description {
+    margin: 0 0 18px;
+
+    color: #52616b;
+
+    font-size: 15px;
+    line-height: 1.5;
+
+    text-align: center;
+}
+
+
+/*barre de progression */
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+
+    margin-bottom: 22px;
+
+    background-color: #e4e8ea;
+
+    border-radius: 999px;
+
+    overflow: hidden;
+}
+
+
+.progress-bar-fill {
+    height: 100%;
+
+    background-color: #00843d;
+
+    border-radius: 999px;
+
+    transition: width 0.3s ease;
+}
+
+
+/*steps */
+
+.extraction-steps {
+    display: flex;
+    flex-direction: column;
+
+    gap: 13px;
+}
+
+
+/*step */
+
+.extraction-step {
+    display: grid;
+
+    grid-template-columns: 25px 1fr auto;
+
+    align-items: center;
+
+    column-gap: 8px;
+
+    color: #536675;
+
+    font-size: 15px;
+}
+
+
+/*icones des etapes */
+
+.step-icon {
+    width: 20px;
+    height: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+}
+
+
+/* étapes terminées */
+
+.extraction-step.completed .step-icon {
+    color: #00843d;
+
+    border: 2px solid #00843d;
+
+    border-radius: 50%;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* texte terminé */
+
+.extraction-step.completed .step-label {
+    color: #102a43;
+}
+
+
+/* statut terminé */
+
+.extraction-step.completed .step-status {
+    color: #00843d;
+}
+
+
+/* active step */
+
+.extraction-step.active .step-icon {
+    color: #00843d;
+
+    border: 2px dotted #00843d;
+
+    border-radius: 50%;
+
+    font-size: 13px;
+}
+
+
+.extraction-step.active .step-label {
+    color: #102a43;
+
+    font-weight: 600;
+}
+
+
+.extraction-step.active .step-status {
+    color: #00843d;
+}
+
+
+/*étapes en attente */
+
+.extraction-step:not(.completed):not(.active) .step-icon {
+    color: #aeb9c1;
+
+    font-size: 22px;
+}
+
+
+.extraction-step:not(.completed):not(.active) .step-label {
+    color: #536675;
+}
+
+
+.extraction-step:not(.completed):not(.active) .step-status {
+    color: #7d8a93;
+}
+
+
+/*infos de sécurité*/
+
+.extraction-security {
+    width: 100%;
+    max-width: 850px;
+
+    margin: 24px auto 0;
+
+    padding: 18px 28px;
+
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+
+    text-align: left;
+
+    background-color: #f1f9f4;
+
+    border-radius: 12px;
+}
+
+
+/* icône sécurité */
+
+.security-icon {
+    width: 48px;
+    height: 48px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #d9f1df;
+
+    color: #00843d;
+}
+
+
+.security-icon svg {
+    font-size: 25px;
+}
+
+
+/* contenu sécurité */
+
+.security-content h3 {
+    margin: 0 0 4px;
+
+    color: #00843d;
+
+    font-size: 18px;
+    font-weight: 700;
+}
+
+
+.security-content p {
+    margin: 0;
+
+    color: #08733b;
+
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+
+/*conseil*/
+
+.extraction-tip {
+    max-width: 850px;
+    margin: 35px auto 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 15px;
+
+    text-align: center;
+}
+
+/* icône conseil */
+.tip-icon {
+    width: 45px;
+    height: 45px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background-color: #e1f5e8;
+    color: #00843d;
+}
+
+.tip-icon svg {
+    font-size: 24px;
+}
+
+/* texte conseil */
+.extraction-tip p {
+    margin: 0;
+
+    color: #52616b;
+
+    font-size: 15px;
+    line-height: 1.5;
+
+    text-align: center;
+}
+
+/*responsive */
+
+@media (max-width: 768px) {
+
+    .extraction-content {
+        padding: 20px 20px 40px;
+    }
+
+    .extraction-progress {
+        flex-direction: column;
+
+        gap: 25px;
+
+        padding: 25px 20px;
+
+        max-width: 650px;
+    }
+
+    .progress-circle {
+        width: 135px;
+        height: 135px;
+    }
+
+    .progress-circle-inner {
+        width: 111px;
+        height: 111px;
+    }
+
+    .progress-circle-inner span {
+        font-size: 32px;
+    }
+
+    .progress-details {
+        width: 100%;
+    }
+
+    .extraction-security {
+        max-width: 650px;
+
+        padding: 18px 20px;
+    }
+
+    .extraction-tip {
+        max-width: 650px;
+    }
+}

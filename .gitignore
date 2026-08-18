@@ -1,0 +1,11 @@
+.env
+.env.local
+*.env
+__pycache__/
+*.pyc
+node_modules/
+dist/
+build/
+media/
+.vscode/
+.idea/
