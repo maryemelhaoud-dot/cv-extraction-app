@@ -61,8 +61,14 @@ cd cv-extraction-app
 
 ### Option 1 : Avec Docker Compose (Recommandé)
 
-1. Assurez-vous d'avoir des fichiers `.env` valides dans `ocr-service/` et `backend/` (copiez depuis `.env.example`).
-2. Lancez les conteneurs :
+1. Copiez `.env.example` en `.env` à la racine ainsi que dans `ocr-service/` et `backend/` :
+   ```bash
+   cp .env.example .env
+   cp ocr-service/.env.example ocr-service/.env
+   cp backend/.env.example backend/.env
+   ```
+2. Renseignez vos clés d'API (Gemini, Groq ou DeepSeek) dans `ocr-service/.env`.
+3. Lancez les conteneurs :
    ```bash
    docker compose up --build
    ```
