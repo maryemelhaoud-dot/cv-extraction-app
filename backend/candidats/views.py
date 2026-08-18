@@ -170,7 +170,7 @@ class UploadCVView(APIView):
             or request.FILES.get("file") 
             or request.FILES.get("cv")
         )
-        provider = request.data.get("provider", "gemini")
+        provider = request.data.get("provider", "gemini_direct")
 
         if not fichier:
             return Response(

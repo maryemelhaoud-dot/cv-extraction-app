@@ -372,6 +372,14 @@ def extract_text_from_image(image):
     if not items:
         return []
 
+    # Deuxième passage : relecture ciblée des zones à faible score de confiance (< 0.75)
+    for item in items:
+        if item["score"] < RECOVERY_SCORE_THRESHOLD:
+            recovered_text = _recover_low_confidence_text(image_array, item)
+            if recovered_text and len(recovered_text) >= len(item["text"]):
+                print(f"[OCR Recovery] Extension texte '{item['text']}' -> '{recovered_text}' (score initial: {item['score']:.2f})")
+                item["text"] = recovered_text
+
     # Séparation prioritaire de l'en-tête (Nom, Prénom, Contacts) en haut de page
     # pour éviter de mélanger le titre/les contacts avec les colonnes de compétences.
     max_y = max(i["y_max"] for i in items)

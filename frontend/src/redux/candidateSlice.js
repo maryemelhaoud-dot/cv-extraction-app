@@ -29,7 +29,7 @@ const candidateSlice = createSlice({
     setCandidat: (state, action) => {
       state.candidatId = action.payload.id
       state.statutTraitement = action.payload.statut_traitement
-      state.nomFichier = action.payload.nomFichier
+      state.nomFichier = action.payload.nomFichier || action.payload.fichier_cv
     },
     resetCandidat: (state) => {
       state.candidatId = null

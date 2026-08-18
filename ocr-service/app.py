@@ -45,7 +45,7 @@ async def extract_cv(file: UploadFile = File(...), provider: str = Query("gemini
 
         texte_ocr = ""
 
-        if provider == "gemini_direct":
+        if provider in ["gemini_direct", "gemini"]:
             try:
                 structured = extract_direct_gemini(temp_path)
             except Exception as error:

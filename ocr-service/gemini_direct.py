@@ -11,10 +11,7 @@ from google.genai import types
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-try:
-    from gemini_paddleocr import RESPONSE_SCHEMA, _guess_mime_type
-except ImportError:
-    from gemini import RESPONSE_SCHEMA, _guess_mime_type
+from gemini_paddleocr import RESPONSE_SCHEMA, _guess_mime_type
 
 load_dotenv()
 
