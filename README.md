@@ -4,7 +4,7 @@ Une application complète et moderne pour l'extraction de texte à partir de CV 
 
 ---
 
-## 🏗️ Architecture du Projet
+##  Architecture du Projet
 
 ```
 cv-extraction-app/
@@ -38,17 +38,17 @@ cv-extraction-app/
 
 ---
 
-## ⚡ Méthodes d'Extraction Supportées
+##  Méthodes d'Extraction Supportées
 
 L'utilisateur peut choisir sa méthode d'extraction préférée depuis l'interface web :
 1. **Gemini Vision Direct** : Envoi du document directement à Gemini Vision sans étape OCR.
-2. **PaddleOCR + Groq Llama 3 (Gratuit)** : Extraction OCR locale + structuration sémantique ultra-rapide (<1s) via Groq API.
+2. **PaddleOCR + Groq Llama 3 (Gratuit)** : Extraction OCR locale + structuration sémantique  via Groq API.
 3. **PaddleOCR + Gemini** : Extraction OCR locale + structuration sémantique via Gemini.
 4. **PaddleOCR + DeepSeek** : Extraction OCR locale + structuration via DeepSeek.
 
 ---
 
-## 🚀 Démarrage Rapide
+##  Démarrage Rapide
 
 ### Option 1 : Avec Docker Compose (Recommandé)
 
@@ -89,7 +89,7 @@ python -m venv venv
 .\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python manage.py migrate
-python manage.py runserver 0.0.0.0:8000
+python manage.py runserver
 ```
 *Accessible sur `http://127.0.0.1:8000`.*
 
@@ -102,14 +102,3 @@ npm run dev
 *Accessible sur `http://localhost:5173`.*
 
 ---
-
-## 📡 Documentation des Endpoints API
-
-### Microservice OCR (Port 8001)
-- `GET /health` : Vérification du statut de l'OCR service.
-- `POST /extract?provider=paddle_groq` : Reçoit `file` (multipart/form-data) et renvoie le JSON structuré.
-
-### Backend Django (Port 8000)
-- `POST /api/upload-cv/` : Téléversement d'un CV et lancement de l'extraction.
-- `GET /api/candidats/` : Liste de tous les candidats.
-- `GET /api/candidats/{id}/` : Détails d'un candidat (avec formations, expériences, etc.).
