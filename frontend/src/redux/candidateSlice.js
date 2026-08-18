@@ -29,7 +29,8 @@ const candidateSlice = createSlice({
     setCandidat: (state, action) => {
       state.candidatId = action.payload.id
       state.statutTraitement = action.payload.statut_traitement
-      state.nomFichier = action.payload.nomFichier || action.payload.fichier_cv
+      const rawPath = action.payload.nomFichier || action.payload.fichier_cv || ""
+      state.nomFichier = rawPath ? rawPath.split('/').pop().split('\\').pop() : ""
     },
     resetCandidat: (state) => {
       state.candidatId = null
