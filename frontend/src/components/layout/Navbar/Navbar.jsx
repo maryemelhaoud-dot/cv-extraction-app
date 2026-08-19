@@ -1,5 +1,5 @@
 import { Stepper, Step, StepLabel } from '@mui/material';
-import './navbar.css';
+import './Navbar.css';
 import logoOcp from '../../../assets/logos/ocp-logo.png';
 
 function Navbar({activeStep = 0 }) {
