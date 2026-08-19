@@ -83,12 +83,40 @@ Analyse le texte et génère un objet JSON structuré strict correspondant exact
       "niveau": "Niveau (ex: Courant, B2)"
     }
   ],
-  "certifications": [],
-  "projets": [],
-  "centres_interet": []
+  "certifications": [
+    {
+      "nom": "Nom de la certification",
+      "organisme": "Organisme émetteur ou null",
+      "date_obtention": null,
+      "date_expiration": null,
+      "url_verification": null
+    }
+  ],
+  "projets": [
+    {
+      "nom_projet": "Nom du projet",
+      "type_projet": "académique, personnel ou professionnel, ou null",
+      "technologies": "Technologies utilisées, séparées par des virgules, ou null",
+      "url_projet": null,
+      "periode": "dates telles quelles ou null",
+      "date_debut": null,
+      "date_fin": null,
+      "en_cours": false,
+      "description": "description du projet ou null",
+      "role": "rôle du candidat dans le projet ou null"
+    }
+  ],
+  "centres_interet": [
+    {
+      "intitule": "Nom du centre d'intérêt",
+      "categorie": null,
+      "description": null
+    }
+  ]
 }
 
 Règles :
+- Les tableaux ci-dessus contiennent UN exemple de structure par section, pour te montrer les noms de champs exacts à utiliser. Ce ne sont pas des valeurs à copier : si une section n'a aucune information dans le CV, retourne un tableau vide [] pour cette clé.
 - Réponds UNIQUEMENT avec l'objet JSON valide, sans texte d'introduction ni balises markdown.
 - N'invente pas d'informations non présentes dans le texte OCR.
 """
