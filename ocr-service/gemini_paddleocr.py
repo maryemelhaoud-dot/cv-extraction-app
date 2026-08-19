@@ -210,6 +210,7 @@ def structure_cv(ocr_text, cv_file_path, provider="gemini", **kwargs):
     prompt = PROMPT.format(ocr_text=ocr_text or "(aucun texte OCR disponible)")
 
     models_to_try = [
+        "gemini-3.6-flash",
         "gemini-2.5-flash",
         "gemini-2.0-flash",
         "gemini-1.5-flash",
@@ -280,6 +281,7 @@ def structure_cv_from_text_only(ocr_text):
     prompt = PROMPT_TEXT_ONLY.format(ocr_text=ocr_text or "(aucun texte OCR extrait)")
 
     models_to_try = [
+        "gemini-3.6-flash",
         "gemini-2.5-flash",
         "gemini-2.0-flash",
         "gemini-1.5-flash",
