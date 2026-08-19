@@ -739,7 +739,7 @@ function Result() {
                         onClick={handleNouveauCV}
                         style={{ backgroundColor: '#00843d', padding: '12px 24px', fontWeight: '700', borderRadius: '8px' }}
                     >
-                        ➕ Analyser un autre CV
+                    Analyser un autre CV
                     </button>
 
                     <button

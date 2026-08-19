@@ -7,22 +7,11 @@ from paddleocr import PaddleOCR
 
 
 OCR_LANGUAGE = "fr"
-PDF_DPI = 120  # Optimisé pour vitesse d'extraction sur CPU
-
-# Un couloir vide horizontal d'au moins ce nombre de pixels est considéré
-# comme une vraie séparation de colonnes (et pas un simple espacement de mots)
+PDF_DPI = 120
 MIN_COLUMN_GAP = 25
-# Tolérance : nombre de boîtes autorisées à "déborder" légèrement dans le
-# couloir sans invalider la détection de colonne (une seule ligne trop
-# longue ne doit pas faire échouer la détection sur toute la page)
 COLUMN_GAP_TOLERANCE = 1
-# Une boîte plus large que ce ratio de la largeur du groupe est considérée
-# comme un titre "pleine largeur" (sert de séparateur explicite)
 WIDE_BOX_RATIO = 0.65
 MAX_RECURSION_DEPTH = 8
-
-# Score de confiance en dessous duquel on tente une seconde lecture ciblée
-# (recadrage agrandi) car la ligne est suspecte de perte de caractères
 RECOVERY_SCORE_THRESHOLD = 0.75
 RECOVERY_PAD_LEFT = 40
 RECOVERY_PAD_OTHER = 20
@@ -34,15 +23,6 @@ OUTPUT_DIR.mkdir(exist_ok=True)
 
 
 SUPPORTED_EXTENSIONS = {".pdf", ".png", ".jpg", ".jpeg"}
-#
-# text_det_unclip_ratio : agrandit la marge de détection autour de chaque
-# ligne de texte (défaut ~1.5). ATTENTION : une valeur trop haute (testé à
-# 2.0) fait fusionner des lignes proches entre elles à la détection (ex: une
-# liste de bullet points serrés), ce qui fait PERDRE du texte au lieu d'en
-# récupérer. 1.6 est un compromis plus sûr ; le second passage ciblé sur les
-# lignes à faible confiance (voir plus bas) fait le reste du travail.
-# Si ce paramètre n'existe pas dans ta version installée (PaddleOCR < 3.0),
-# remplace-le par det_db_unclip_ratio=1.6.
 
 def _init_paddleocr():
     kwargs_list = [
@@ -60,10 +40,7 @@ def _init_paddleocr():
 
 ocr = _init_paddleocr()
 
-
-# ============================================================
 # LECTURE DES RESULTATS PADDLEOCR 3.x (inchangé, déjà correct)
-# ============================================================
 
 def get_result_value(result, key, default=None):
     if hasattr(result, key):
@@ -88,23 +65,9 @@ def get_box_coordinates(box):
 
     return None
 
-
-# ============================================================
 # RECUPERATION DES LETTRES PERDUES (score de confiance faible)
-# ============================================================
 
 def _recover_low_confidence_text(image_array, item):
-    """
-    Pour une boîte à faible score de confiance, relance la reconnaissance
-    sur un recadrage de l'image agrandi (surtout à gauche) autour de cette
-    boîte précise. Corrige les cas où la boîte de détection initiale était
-    trop ajustée et a rogné le début du texte.
-
-    Ce n'est PAS une correction de texte codée en dur : c'est une nouvelle
-    lecture de l'image sur une zone élargie, générale à tout CV. Le
-    remplacement n'a lieu que si le nouveau texte est plus long et contient
-    l'ancien texte (donc c'est bien une extension, pas une lecture différente).
-    """
     h, w = image_array.shape[:2]
     x0 = max(0, int(item["x_min"]) - RECOVERY_PAD_LEFT)
     y0 = max(0, int(item["y_min"]) - RECOVERY_PAD_OTHER)
@@ -134,24 +97,14 @@ def _recover_low_confidence_text(image_array, item):
     candidate = " ".join(t.strip() for t in texts if t and t.strip())
     return candidate or None
 
-
-# ============================================================
 # ORDRE DE LECTURE : DETECTION DES COLONNES (XY-cut) puis FUSION DE LIGNE
-# ============================================================
-#
-# C'EST ICI QU'ÉTAIT LE BUG PRINCIPAL : l'ancienne version fusionnait tous
-# les items à la même hauteur (y proche) en une seule ligne, SANS vérifier
-# leur distance horizontale. Résultat : "CONTACT" (colonne gauche) et
-# "PROFIL" (colonne droite) à la même hauteur finissaient fusionnés en
-# "CONTACT PROFIL". La correction : détecter les colonnes AVANT de fusionner.
 
 def _group_width(items):
     return max(i["x_max"] for i in items) - min(i["x_min"] for i in items)
 
 
 def _split_by_wide_boxes(items, ratio=WIDE_BOX_RATIO):
-    """Les titres pleine largeur (ex: un h1 au-dessus de 2 colonnes) servent
-    de séparateurs explicites, pour ne pas bloquer la détection des colonnes."""
+    """Sépare les éléments par les titres pleine largeur qui servent de séparateurs."""
     total_width = _group_width(items)
     if total_width <= 0:
         return None
@@ -183,8 +136,7 @@ def _split_by_wide_boxes(items, ratio=WIDE_BOX_RATIO):
 
 
 def _column_gaps(items, min_gap=MIN_COLUMN_GAP, bin_width=4, tolerance=COLUMN_GAP_TOLERANCE):
-    """Cherche les couloirs verticaux quasi vides (au plus `tolerance` boîtes
-    les traversant), robuste aux quelques lignes qui débordent légèrement."""
+    """Cherche les couloirs verticaux quasi vides pour détecter les colonnes."""
     min_x = min(i["x_min"] for i in items)
     max_x = max(i["x_max"] for i in items)
     n_bins = max(1, int((max_x - min_x) / bin_width) + 1)
@@ -263,9 +215,7 @@ def _split_bands(items, min_gap=12):
 
 
 def _merge_into_lines(items):
-    """Fusionne les fragments proches en lignes de texte (logique d'origine du
-    projet, conservée mais appliquée UNIQUEMENT à l'intérieur d'une même
-    colonne, plus jamais entre deux colonnes)."""
+    """Fusionne les fragments proches en lignes de texte au sein d'une colonne."""
     items_sorted = sorted(items, key=lambda i: (i["y_min"] + i["y_max"]) / 2)
     grouped = []
 
@@ -327,9 +277,7 @@ def _reading_order(items, depth=0, max_depth=MAX_RECURSION_DEPTH):
     return _merge_into_lines(items)
 
 
-# ============================================================
-# OCR D'UNE IMAGE
-# ============================================================
+# OCR d'une image
 
 def extract_text_from_image(image):
     image = image.convert("RGB")
@@ -400,9 +348,7 @@ def extract_text_from_image(image):
     return lines
 
 
-# ============================================================
-# OCR D'UN PDF
-# ============================================================
+# OCR d'un PDF
 
 def extract_text_from_pdf(file_path):
     images = convert_from_path(str(file_path), dpi=PDF_DPI)
@@ -415,9 +361,7 @@ def extract_text_from_pdf(file_path):
     return pages_text
 
 
-# ============================================================
-# FONCTION PRINCIPALE
-# ============================================================
+# Fonction principale d'extraction
 
 def extract_text(file_path):
     file_path = Path(file_path)
@@ -441,9 +385,7 @@ def extract_text(file_path):
     return "\n".join(lines)
 
 
-# ============================================================
-# SAUVEGARDE
-# ============================================================
+# Sauvegarde du texte extrait
 
 def save_text(text, file_path):
     output_file = OUTPUT_DIR / (Path(file_path).stem + ".txt")
@@ -451,9 +393,7 @@ def save_text(text, file_path):
     return output_file
 
 
-# ============================================================
-# TEST DIRECT
-# ============================================================
+# Exécution en ligne de commande
 
 if __name__ == "__main__":
     import sys
@@ -478,11 +418,11 @@ if __name__ == "__main__":
         output_file = save_text(text, input_file)
 
         print()
-        print("================ OCR ================")
+        print("--- Résultat OCR ---")
         print()
         print(text)
         print()
-        print("=====================================")
+        print("--------------------")
         print()
         print(f"Texte sauvegardé dans : {output_file}")
 
