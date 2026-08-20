@@ -81,7 +81,7 @@ function UploadZone() {
                     type="file"
                     id="file-upload"
                     className="file-input"
-                    accept=".pdf,.png,.jpg,.jpeg"
+                    accept=".pdf"
                     onChange={handleFileChange}
                 />
 
