@@ -14,7 +14,6 @@ cv-extraction-app/
 │   ├── groq_paddleocr.py    # Integration Groq (Llama 3 / Compound)
 │   ├── gemini_direct.py     # Integration Gemini Vision Direct
 │   ├── gemini_paddleocr.py  # Integration Gemini Text-Only
-│   ├── deepseek_paddleocr.py# Integration DeepSeek API
 │   ├── .env.example         # Modèle des variables d'environnement
 │   ├── Dockerfile
 │   └── requirements.txt
