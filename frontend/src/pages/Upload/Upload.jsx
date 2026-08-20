@@ -20,7 +20,7 @@ function Upload() {
 
                     <div className="info-item">
                         <DescriptionOutlinedIcon />
-                        <p>Formats acceptés : PDF, PNG, JPG</p>
+                        <p>Formats acceptés : PDF</p>
                     </div>
 
                     <div className="info-item">

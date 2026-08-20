@@ -10,9 +10,9 @@ class Formation(models.Model):
         related_name="formations"
     )
 
-    diplome = models.CharField(max_length=255)
-    specialite = models.CharField(max_length=255, blank=True, null=True)
-    etablissement = models.CharField(max_length=255, blank=True, null=True)
+    diplome = models.TextField()
+    specialite = models.TextField(blank=True, null=True)
+    etablissement = models.TextField(blank=True, null=True)
     lieu = models.CharField(max_length=150, blank=True, null=True)
     periode = models.CharField(max_length=100, blank=True, null=True)
     date_debut = models.DateField(blank=True, null=True)

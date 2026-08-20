@@ -11,7 +11,7 @@ class Experience(models.Model):
     )
 
     type = models.CharField(max_length=100, blank=True, null=True)
-    poste = models.CharField(max_length=255)
+    poste = models.TextField()
     organisme = models.CharField(max_length=255, blank=True, null=True)
     lieu = models.CharField(max_length=150, blank=True, null=True)
     periode = models.CharField(max_length=100, blank=True, null=True)

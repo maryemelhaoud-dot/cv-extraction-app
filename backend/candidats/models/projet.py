@@ -10,7 +10,7 @@ class Projet(models.Model):
         related_name="projets"
     )
 
-    nom_projet = models.CharField(max_length=255)
+    nom_projet = models.TextField()
     type_projet = models.CharField(max_length=100, blank=True, null=True)
     technologies = models.TextField(blank=True, null=True)
     url_projet = models.URLField(max_length=500, blank=True, null=True)

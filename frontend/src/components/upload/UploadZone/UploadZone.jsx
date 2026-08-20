@@ -115,10 +115,9 @@ function UploadZone() {
                             boxShadow: '0 2px 6px rgba(0,0,0,0.06)'
                         }}
                     >
-                        <option value="gemini_direct">Gemini Vision Direct (IA Cloud)</option>
+                        <option value="gemini_direct">Gemini Vision Direct</option>
                         <option value="paddle_groq">PaddleOCR + Groq Llama 3 (Gratuit)</option>
-                        <option value="paddle_gemini">PaddleOCR + Gemini (Texte OCR pur transmis à Gemini)</option>
-                        <option value="paddle_deepseek">PaddleOCR + DeepSeek (Texte OCR pur + LLM Payant)</option>
+                        <option value="paddle_gemini">PaddleOCR + Gemini (Limité)</option>
                     </select>
                 </div>
 
