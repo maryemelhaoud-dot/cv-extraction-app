@@ -23,9 +23,9 @@ SUPPORTED_EXTENSIONS = {
 # initialisation OCR
 
 ocr = PaddleOCR(
-    lang=OCR_LANGUAGE
+    lang=OCR_LANGUAGE,
+    enable_mkldnn=False
 )
-
 
 # lecture du résultat PaddleOCR
 
