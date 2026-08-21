@@ -1,6 +1,6 @@
 # Application d'Extraction et de Structuration de CV (CV Extraction App)
 
-Une application complète et moderne pour l'extraction de texte à partir de CV (PDF, PNG, JPG) grâce à **PaddleOCR** et la structuration intelligente en JSON via **Groq (Llama 3)**, **Gemini Vision**, ou **DeepSeek**, la persistance REST dans un backend **Django**, et une interface utilisateur en **React (Vite)**.
+Une application complète et moderne pour l'extraction de texte à partir de CV (PDF) grâce à **PaddleOCR** et la structuration intelligente en JSON via **Groq (Llama 3)**, **Gemini Vision**, la persistance REST dans un backend **Django**, et une interface utilisateur en **React (Vite)**.
 
 ---
 
@@ -43,7 +43,6 @@ L'utilisateur peut choisir sa méthode d'extraction préférée depuis l'interfa
 1. **Gemini Vision Direct** : Envoi du document directement à Gemini Vision sans étape OCR.
 2. **PaddleOCR + Groq Llama 3 (Gratuit)** : Extraction OCR locale + structuration sémantique  via Groq API.
 3. **PaddleOCR + Gemini** : Extraction OCR locale + structuration sémantique via Gemini.
-4. **PaddleOCR + DeepSeek** : Extraction OCR locale + structuration via DeepSeek.
 
 ---
 
@@ -66,7 +65,7 @@ cd cv-extraction-app
    cp ocr-service/.env.example ocr-service/.env
    cp backend/.env.example backend/.env
    ```
-2. Renseignez vos clés d'API (Gemini, Groq ou DeepSeek) dans `ocr-service/.env`.
+2. Renseignez vos clés d'API (Gemini, Groq) dans `ocr-service/.env`.
 3. Lancez les conteneurs :
    ```bash
    docker compose up --build
